@@ -59,12 +59,18 @@
     .stats span {
       font-weight: bold;
     }
+    #logo {
+      max-width: 100%;
+      height: auto;
+      margin-top: 20px;
+    }
   </style>
-  <!-- Füge die SQLite.js-Bibliothek hinzu -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.7.3/sql-wasm.js"></script>
 </head>
 <body>
 <h1>Kilometer Tracker</h1>
+
+<!-- Dein Bild mit dem ID-Attribut "logo" -->
+<img id="logo" src="dein-bild.jpg" alt="Kilometer Tracker Logo">
 
 <form id="kilometerForm">
   <div class="form-row">
@@ -85,21 +91,19 @@
 </div>
 
 <script>
-  // Erstelle eine leere SQLite-Datenbank
-  let db = new SQL.Database();
-
   function eintragSenden() {
     var kilometers = document.getElementById('kilometers').value;
     var name = document.getElementById('name').value || 'Anonym';
 
-    // Führe SQL-Insert-Abfrage aus
-    db.run('CREATE TABLE IF NOT EXISTS eintraege (kilometers REAL, name TEXT)');
-    db.run('INSERT INTO eintraege (kilometers, name) VALUES (?, ?)', [kilometers, name]);
+    // E-Mail-Text erstellen
+    var emailText = name + ' hat ' + kilometers + ' Kilometer eingetragen.';
 
-    // Aktualisiere die Anzeige der aktuellen Kilometer
-    var stmt = db.prepare('SELECT COALESCE(SUM(kilometers), 0) AS totalKilometers FROM eintraege');
-    stmt.step();
-    var currentKilometers = stmt.get().totalKilometers;
+    // E-Mail-Versand (nur für Lernzwecke, nicht für den produktiven Einsatz)
+    window.location.href = 'mailto:deine@email.com?subject=Kilometer Tracker Eintrag&body=' + encodeURIComponent(emailText);
+
+    // Aktualisiere die Anzeige der aktuellen Kilometer (wie zuvor)
+    var currentKilometers = parseFloat(document.getElementById('currentKilometers').textContent) || 0;
+    currentKilometers += parseFloat(kilometers);
     document.getElementById('currentKilometers').textContent = currentKilometers.toFixed(1) + ' km';
   }
 </script>
