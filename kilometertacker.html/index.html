@@ -6,7 +6,7 @@
   <title>Kilometer Tracker</title>
   <style>
     body {
-      font-size: 1.2em;
+      font-size: 1em;
       background-color: #FFFFFF;
       color: #1E1E1E;
       font-family: Arial, sans-serif;
@@ -23,14 +23,14 @@
     }
     .form-row {
       display: flex;
-      align-items: center;
+      flex-direction: column;
       margin-bottom: 10px;
     }
     label, input {
-      margin-right: 10px;
+      margin-bottom: 3px;
       font-size: inherit;
       border: 2px solid #007BFF;
-      padding: 5px;
+      padding: 3px;
       color: #007BFF;
     }
     input {
@@ -43,7 +43,7 @@
       font-size: inherit;
       color: #FFFFFF;
       cursor: pointer;
-      position: fixed; /* Update position to fixed */
+      position: fixed;
       bottom: 10px;
       left: 10px;
     }
@@ -59,18 +59,14 @@
     .stats span {
       font-weight: bold;
     }
-    #logo {
-      max-width: 100%;
-      height: auto;
-      margin-top: 20px;
+    .notification {
+      color: red;
+      margin-top: 5px;
     }
   </style>
 </head>
 <body>
 <h1>Kilometer Tracker</h1>
-
-<!-- Dein Bild mit dem ID-Attribut "logo" -->
-<img id="logo" src="dein-bild.jpg" alt="Kilometer Tracker Logo">
 
 <form id="kilometerForm">
   <div class="form-row">
@@ -82,18 +78,29 @@
     <label for="name">Name (optional):</label>
     <input type="text" id="name" name="name">
   </div>
+
+  <div class="notification" id="notification"></div>
 </form>
 
 <button type="button" onclick="eintragSenden()">Eintragen</button>
 
 <div class="stats">
-  <span>Aktueller Stand:</span> <span id="currentKilometers" style="background-color: white; color: blue; padding: 5px; border-radius: 5px;">0 km</span>
+  <span>Aktueller Stand:</span> <span id="currentKilometers" style="background-color: white; color: blue; padding: 3px; border-radius: 3px;">0 km</span>
 </div>
 
 <script>
   function eintragSenden() {
     var kilometers = document.getElementById('kilometers').value;
     var name = document.getElementById('name').value || 'Anonym';
+
+    // Überprüfe, ob Kilometerstand eingegeben wurde
+    if (kilometers.trim() === "") {
+      document.getElementById('notification').textContent = "Bitte einen Kilometerstand eingeben.";
+      return;
+    }
+
+    // Zurücksetzen der Benachrichtigung
+    document.getElementById('notification').textContent = "";
 
     // E-Mail-Text erstellen
     var emailText = name + ' hat ' + kilometers + ' Kilometer eingetragen.';
