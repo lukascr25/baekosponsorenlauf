@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kilometer Tracker</title>
+  <style>
+    body {
+      font-size: 1.2em;
+      background-color: #FFFFFF;
+      color: #1E1E1E;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      margin: 20px;
+      position: relative;
+    }
+    h1 {
+      background-color: #007BFF;
+      padding: 10px;
+      color: #FFFFFF;
+      margin: 0;
+    }
+    .form-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    label, input {
+      margin-right: 10px;
+      font-size: inherit;
+      border: 2px solid #007BFF;
+      padding: 5px;
+      color: #007BFF;
+    }
+    input {
+      flex: 1;
+    }
+    button {
+      background-color: #007BFF;
+      border: none;
+      padding: 10px 20px;
+      font-size: inherit;
+      color: #FFFFFF;
+      cursor: pointer;
+      position: fixed; /* Update position to fixed */
+      bottom: 10px;
+      left: 10px;
+    }
+    .stats {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background-color: #007BFF;
+      padding: 10px;
+      color: #FFFFFF;
+      font-weight: bold;
+    }
+    .stats span {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+<h1>Kilometer Tracker</h1>
+
+<form id="kilometerForm">
+  <div class="form-row">
+    <label for="kilometers">Gelaufene Kilometer:</label>
+    <input type="number" id="kilometers" name="kilometers" min="0.1" step="0.1" required>
+  </div>
+
+  <div class="form-row">
+    <label for="name">Name (optional):</label>
+    <input type="text" id="name" name="name">
+  </div>
+</form>
+
+<button type="button" onclick="eintragSenden()">Eintragen</button>
+
+<div class="stats">
+  <span>Aktueller Stand:</span> <span id="currentKilometers" style="background-color: white; color: blue; padding: 5px; border-radius: 5px;">0 km</span>
+</div>
+
+<script>
+  function eintragSenden() {
+    var kilometers = document.getElementById('kilometers').value;
+    var name = document.getElementById('name').value || 'Anonym';
+
+    // E-Mail-Text erstellen
+    var emailText = name + ' hat ' + kilometers + ' Kilometer eingetragen.';
+
+    // E-Mail-Versand (nur für Lernzwecke, nicht für den produktiven Einsatz)
+    window.location.href = 'mailto:deine@email.com?subject=Kilometer Tracker Eintrag&body=' + encodeURIComponent(emailText);
+
+    // Aktualisiere die Anzeige der aktuellen Kilometer (wie zuvor)
+    var currentKilometers = parseFloat(document.getElementById('currentKilometers').textContent) || 0;
+    currentKilometers += parseFloat(kilometers);
+    document.getElementById('currentKilometers').textContent = currentKilometers.toFixed(1) + ' km';
+  }
+</script>
+</body>
+</html>
