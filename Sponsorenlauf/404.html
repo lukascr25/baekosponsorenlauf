@@ -6,7 +6,7 @@
   <title>Kilometer Tracker</title>
   <style>
     body {
-      font-size: 1.2em;
+      font-size: 1em;
       background-color: #FFFFFF;
       color: #1E1E1E;
       font-family: Arial, sans-serif;
@@ -23,14 +23,14 @@
     }
     .form-row {
       display: flex;
-      align-items: center;
+      flex-direction: column;
       margin-bottom: 10px;
     }
     label, input {
-      margin-right: 10px;
+      margin-bottom: 3px;
       font-size: inherit;
       border: 2px solid #007BFF;
-      padding: 5px;
+      padding: 3px;
       color: #007BFF;
     }
     input {
@@ -43,7 +43,7 @@
       font-size: inherit;
       color: #FFFFFF;
       cursor: pointer;
-      position: fixed; /* Update position to fixed */
+      position: fixed;
       bottom: 10px;
       left: 10px;
     }
@@ -58,6 +58,10 @@
     }
     .stats span {
       font-weight: bold;
+    }
+    .notification {
+      color: red;
+      margin-top: 5px;
     }
   </style>
 </head>
@@ -74,12 +78,14 @@
     <label for="name">Name (optional):</label>
     <input type="text" id="name" name="name">
   </div>
+
+  <div class="notification" id="notification"></div>
 </form>
 
 <button type="button" onclick="eintragSenden()">Eintragen</button>
 
 <div class="stats">
-  <span>Aktueller Stand:</span> <span id="currentKilometers" style="background-color: white; color: blue; padding: 5px; border-radius: 5px;">0 km</span>
+  <span>Aktueller Stand:</span> <span id="currentKilometers" style="background-color: white; color: blue; padding: 3px; border-radius: 3px;">0 km</span>
 </div>
 
 <script>
@@ -87,16 +93,32 @@
     var kilometers = document.getElementById('kilometers').value;
     var name = document.getElementById('name').value || 'Anonym';
 
-    // E-Mail-Text erstellen
-    var emailText = name + ' hat ' + kilometers + ' Kilometer eingetragen.';
+    // Überprüfe, ob Kilometerstand eingegeben wurde
+    if (kilometers.trim() === "") {
+      document.getElementById('notification').textContent = "Bitte einen Kilometerstand eingeben.";
+      return;
+    }
 
-    // E-Mail-Versand (nur für Lernzwecke, nicht für den produktiven Einsatz)
-    window.location.href = 'mailto:deine@email.com?subject=Kilometer Tracker Eintrag&body=' + encodeURIComponent(emailText);
+    // Zurücksetzen der Benachrichtigung
+    document.getElementById('notification').textContent = "";
 
-    // Aktualisiere die Anzeige der aktuellen Kilometer (wie zuvor)
-    var currentKilometers = parseFloat(document.getElementById('currentKilometers').textContent) || 0;
-    currentKilometers += parseFloat(kilometers);
-    document.getElementById('currentKilometers').textContent = currentKilometers.toFixed(1) + ' km';
+    // Ajax-Anfrage zum Aktualisieren des Kilometerstands auf dem Server
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'http://localhost:3000/api/kilometers', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          // Erfolgreiche Antwort vom Server
+          var response = JSON.parse(xhr.responseText);
+          document.getElementById('currentKilometers').textContent = response.kilometers.toFixed(1) + ' km';
+        } else {
+          // Fehlerbehandlung, falls die Anfrage fehlschlägt
+          document.getElementById('notification').textContent = "Fehler beim Aktualisieren des Kilometerstands.";
+        }
+      }
+    };
+    xhr.send(JSON.stringify({ kilometers: kilometers }));
   }
 </script>
 </body>
